@@ -7,11 +7,11 @@ import OnboardingPage from "./pages/OnboardingPage";
 import Shell from "./components/Shell";
 import DashboardPage from "./pages/DashboardPage";
 import IngresoPage from "./pages/IngresoPage";
+import InventarioPage from "./pages/InventarioPage";
 import ComingSoonPage from "./pages/ComingSoonPage";
 
 const comingSoon = {
   "/calendario": ["Calendario", "Todos los trabajos del mes de un vistazo."],
-  "/inventario": ["Inventario general", "Stock por producto, lote, depósito y estado."],
   "/reservas": ["Reservas", "Equipo comprometido para cada evento, propio o subcontratado."],
   "/preparacion": ["Preparación de pedido", "Asignación óptima de lotes y series."],
   "/transporte": ["Plan de carga", "Peso real y asignación de vehículos."],
@@ -33,6 +33,7 @@ function ProtectedApp({ session, profile }) {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/ingreso" element={<IngresoPage />} />
+        <Route path="/inventario" element={<InventarioPage />} />
         {Object.entries(comingSoon).map(([path, [title, description]]) => (
           <Route key={path} path={path} element={<ComingSoonPage title={title} description={description} />} />
         ))}
