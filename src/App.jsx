@@ -10,15 +10,15 @@ import IngresoPage from "./pages/IngresoPage";
 import InventarioPage from "./pages/InventarioPage";
 import ReservasPage from "./pages/ReservasPage";
 import PreparacionPage from "./pages/PreparacionPage";
+import RetornoPage from "./pages/RetornoPage";
+import VehiculosPage from "./pages/VehiculosPage";
+import ReportesPage from "./pages/ReportesPage";
 import ComingSoonPage from "./pages/ComingSoonPage";
 
 const comingSoon = {
   "/calendario": ["Calendario", "Todos los trabajos del mes de un vistazo."],
   "/transporte": ["Plan de carga", "Peso real y asignación de vehículos."],
-  "/vehiculos": ["Vehículos", "Kilómetros, viajes y mantenimiento de la flota."],
-  "/retorno": ["Retorno de evento", "Inspección de equipo al volver."],
   "/taller": ["Reparación", "Ticket de taller, incluye selección de gabinete y repuestos."],
-  "/reportes": ["Reportes", "Fallas por zona, rentabilidad y valor del stock."],
   "/clientes": ["Clientes", "Historial e ingresos por cliente."],
   "/colaboradores": ["Colaboradores", "Subcontratistas para cubrir faltantes de stock."],
   "/personal": ["Personal", "Empleados fijos y colaboradores eventuales."],
@@ -36,6 +36,9 @@ function ProtectedApp({ session, profile }) {
         <Route path="/inventario" element={<InventarioPage />} />
         <Route path="/reservas" element={<ReservasPage />} />
         <Route path="/preparacion" element={<PreparacionPage />} />
+        <Route path="/retorno" element={<RetornoPage />} />
+        <Route path="/vehiculos" element={<VehiculosPage />} />
+        <Route path="/reportes" element={<ReportesPage />} />
         {Object.entries(comingSoon).map(([path, [title, description]]) => (
           <Route key={path} path={path} element={<ComingSoonPage title={title} description={description} />} />
         ))}
