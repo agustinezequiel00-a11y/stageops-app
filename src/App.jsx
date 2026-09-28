@@ -16,14 +16,15 @@ import ReportesPage from "./pages/ReportesPage";
 import ClientesPage from "./pages/ClientesPage";
 import ColaboradoresPage from "./pages/ColaboradoresPage";
 import PersonalPage from "./pages/PersonalPage";
+import ProveedoresPage from "./pages/ProveedoresPage";
+import ConfiguracionPage from "./pages/ConfiguracionPage";
+import CalendarioPage from "./pages/CalendarioPage";
 import ComingSoonPage from "./pages/ComingSoonPage";
 
 const comingSoon = {
-  "/calendario": ["Calendario", "Todos los trabajos del mes de un vistazo."],
-  "/transporte": ["Plan de carga", "Peso real y asignaciÃ³n de vehÃ­culos."],
-  "/taller": ["ReparaciÃ³n", "Ticket de taller, incluye selecciÃ³n de gabinete y repuestos."],
-  "/proveedores": ["Proveedores", "Registro e historial de compras."],
-  "/configuracion": ["ConfiguraciÃ³n", "Empresa, mÃ³dulos habilitados y usuarios."],
+  "/transporte": ["Plan de carga", "Peso real y asignaciÃÂ³n de vehÃÂ­culos."],
+  "/taller": ["ReparaciÃÂ³n", "Ticket de taller, incluye selecciÃÂ³n de gabinete y repuestos."],
+  "/configuracion": ["ConfiguraciÃÂ³n", "Empresa, mÃÂ³dulos habilitados y usuarios."],
 };
 
 function ProtectedApp({ session, profile }) {
@@ -42,6 +43,9 @@ function ProtectedApp({ session, profile }) {
         <Route path="/clientes" element={<ClientesPage />} />
         <Route path="/colaboradores" element={<ColaboradoresPage />} />
         <Route path="/personal" element={<PersonalPage />} />
+        <Route path="/proveedores" element={<ProveedoresPage />} />
+        <Route path="/configuracion" element={<ConfiguracionPage />} />
+        <Route path="/calendario" element={<CalendarioPage />} />
         {Object.entries(comingSoon).map(([path, [title, description]]) => (
           <Route key={path} path={path} element={<ComingSoonPage title={title} description={description} />} />
         ))}
@@ -62,9 +66,9 @@ export default function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  if (hasSupabase && session === undefined) return <div className="center-screen">Cargando StageOPSâ¦</div>;
+  if (hasSupabase && session === undefined) return <div className="center-screen">Cargando StageOPSÃ¢ÂÂ¦</div>;
   if (!session) return <LoginPage />;
-  if (hasSupabase && profileLoading) return <div className="center-screen">Cargando perfilâ¦</div>;
+  if (hasSupabase && profileLoading) return <div className="center-screen">Cargando perfilÃ¢ÂÂ¦</div>;
   if (hasSupabase && !profile?.organization_id) return <OnboardingPage session={session} />;
 
   return <ProtectedApp session={session} profile={profile} />;
