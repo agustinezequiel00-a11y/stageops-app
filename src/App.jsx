@@ -13,17 +13,17 @@ import PreparacionPage from "./pages/PreparacionPage";
 import RetornoPage from "./pages/RetornoPage";
 import VehiculosPage from "./pages/VehiculosPage";
 import ReportesPage from "./pages/ReportesPage";
+import ClientesPage from "./pages/ClientesPage";
+import ColaboradoresPage from "./pages/ColaboradoresPage";
+import PersonalPage from "./pages/PersonalPage";
 import ComingSoonPage from "./pages/ComingSoonPage";
 
 const comingSoon = {
   "/calendario": ["Calendario", "Todos los trabajos del mes de un vistazo."],
-  "/transporte": ["Plan de carga", "Peso real y asignación de vehículos."],
-  "/taller": ["Reparación", "Ticket de taller, incluye selección de gabinete y repuestos."],
-  "/clientes": ["Clientes", "Historial e ingresos por cliente."],
-  "/colaboradores": ["Colaboradores", "Subcontratistas para cubrir faltantes de stock."],
-  "/personal": ["Personal", "Empleados fijos y colaboradores eventuales."],
+  "/transporte": ["Plan de carga", "Peso real y asignaciÃ³n de vehÃ­culos."],
+  "/taller": ["ReparaciÃ³n", "Ticket de taller, incluye selecciÃ³n de gabinete y repuestos."],
   "/proveedores": ["Proveedores", "Registro e historial de compras."],
-  "/configuracion": ["Configuración", "Empresa, módulos habilitados y usuarios."],
+  "/configuracion": ["ConfiguraciÃ³n", "Empresa, mÃ³dulos habilitados y usuarios."],
 };
 
 function ProtectedApp({ session, profile }) {
@@ -39,6 +39,9 @@ function ProtectedApp({ session, profile }) {
         <Route path="/retorno" element={<RetornoPage />} />
         <Route path="/vehiculos" element={<VehiculosPage />} />
         <Route path="/reportes" element={<ReportesPage />} />
+        <Route path="/clientes" element={<ClientesPage />} />
+        <Route path="/colaboradores" element={<ColaboradoresPage />} />
+        <Route path="/personal" element={<PersonalPage />} />
         {Object.entries(comingSoon).map(([path, [title, description]]) => (
           <Route key={path} path={path} element={<ComingSoonPage title={title} description={description} />} />
         ))}
@@ -59,9 +62,9 @@ export default function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  if (hasSupabase && session === undefined) return <div className="center-screen">Cargando StageOPS…</div>;
+  if (hasSupabase && session === undefined) return <div className="center-screen">Cargando StageOPSâ¦</div>;
   if (!session) return <LoginPage />;
-  if (hasSupabase && profileLoading) return <div className="center-screen">Cargando perfil…</div>;
+  if (hasSupabase && profileLoading) return <div className="center-screen">Cargando perfilâ¦</div>;
   if (hasSupabase && !profile?.organization_id) return <OnboardingPage session={session} />;
 
   return <ProtectedApp session={session} profile={profile} />;
