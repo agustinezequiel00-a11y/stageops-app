@@ -14,6 +14,10 @@ export default function DepositosPage() {
   const [showNewWarehouse, setShowNewWarehouse] = useState(false);
   const [newWhName, setNewWhName] = useState("");
   const [newWhArea, setNewWhArea] = useState("");
+  const [newWhAddress, setNewWhAddress] = useState("");
+
+  const [editAddress, setEditAddress] = useState("");
+  const [savingAddress, setSavingAddress] = useState(false);
 
   const [showNewLocation, setShowNewLocation] = useState(false);
   const [locCode, setLocCode] = useState("");
@@ -24,6 +28,7 @@ export default function DepositosPage() {
 
   const [reassignType, setReassignType] = useState("serial");
   const [reassignCode, setReassignCode] = useState("");
+  const [reassignTarget, setReassignTarget] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function loadWarehouses() {
@@ -36,7 +41,7 @@ export default function DepositosPage() {
     }
     const [{ data: org }, whRes] = await Promise.all([
       supabase.rpc("current_org_id"),
-      supabase.from("warehouses").select("id, name, total_area_m2").eq("active", true).order("name"),
+      supabase.from("warehouses").select("id, name, total_area_m2, address").eq("active", true).order("name"),
     ]);
     setOrgId(org);
     setWarehouses(whRes.data || []);
@@ -63,6 +68,20 @@ export default function DepositosPage() {
     if (selectedWarehouseId) loadWarehouseDetail(selectedWarehouseId);
   }, [selectedWarehouseId]);
 
+  useEffect(() => {
+    const wh = warehouses.find((w) => w.id === selectedWarehouseId);
+    setEditAddress(wh?.address || "");
+  }, [selectedWarehouseId, warehouses]);
+
+  async function saveAddress() {
+    setSavingAddress(true);
+    setError("");
+    const { error: err } = await supabase.from("warehouses").update({ address: editAddress.trim() || null }).eq("id", selectedWarehouseId);
+    setSavingAddress(false);
+    if (err) { setError(err.message); return; }
+    setWarehouses((ws) => ws.map((w) => (w.id === selectedWarehouseId ? { ...w, address: editAddress.trim() || null } : w)));
+  }
+
   async function createWarehouse() {
     if (!newWhName.trim()) {
       setError("Ingresá el nombre del depósito.");
@@ -74,12 +93,13 @@ export default function DepositosPage() {
       organization_id: orgId,
       name: newWhName.trim(),
       total_area_m2: newWhArea ? Number(newWhArea) : null,
+      address: newWhAddress.trim() || null,
       active: true,
     }).select().single();
     setBusy(false);
     if (err) { setError(err.message); return; }
     setShowNewWarehouse(false);
-    setNewWhName(""); setNewWhArea("");
+    setNewWhName(""); setNewWhArea(""); setNewWhAddress("");
     await loadWarehouses();
     setSelectedWarehouseId(data.id);
   }
@@ -147,6 +167,7 @@ export default function DepositosPage() {
               <div className="field"><label>Nombre</label><input value={newWhName} onChange={(e) => setNewWhName(e.target.value)} placeholder="Depósito Norte" /></div>
               <div className="field"><label>Superficie total (m², opcional)</label><input type="number" value={newWhArea} onChange={(e) => setNewWhArea(e.target.value)} /></div>
             </div>
+            <div className="field"><label>Dirección</label><input value={newWhAddress} onChange={(e) => setNewWhAddress(e.target.value)} placeholder="Av. Siempre Viva 742, Escobar" /></div>
             <button className="btn btn-primary" disabled={busy} onClick={createWarehouse}>{busy ? "Guardando…" : "Crear depósito"}</button>
           </div>
         )}
@@ -157,6 +178,16 @@ export default function DepositosPage() {
             {warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
         </div>
+
+        {selectedWarehouseId && (
+          <div className="field" style={{ marginTop: 10 }}>
+            <label>Dirección</label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input value={editAddress} onChange={(e) => setEditAddress(e.target.value)} placeholder="Sin dirección cargada" style={{ flex: 1 }} />
+              <button className="btn btn-primary" disabled={savingAddress} onClick={saveAddress}>{savingAddress ? "Guardando…" : "Guardar"}</button>
+            </div>
+          </div>
+        )}
       </div>
 
       {summary && (
