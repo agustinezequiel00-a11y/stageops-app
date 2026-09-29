@@ -6,6 +6,8 @@ const stateLabel = { available: "disponible", reserved: "reservado", at_event: "
 
 export default function InventarioPage() {
   const [loading, setLoading] = useState(true);
+  const [qrProductId, setQrProductId] = useState("");
+  const [qrQuantity, setQrQuantity] = useState("1");
   const [error, setError] = useState("");
   const [rows, setRows] = useState([]);
   const [products, setProducts] = useState([]);
@@ -25,11 +27,11 @@ export default function InventarioPage() {
       setError("");
       if (!hasSupabase) {
         setRows([
-          { product_id: "p1", warehouse_id: "w1", lot_id: "l1", state: "available", quantity: 196, product: { name: "Módulo P3.9", track_serials: true }, lot: { code: "P39-2026-A" }, warehouse: { name: "Depósito Central" } },
-          { product_id: "p1", warehouse_id: "w1", lot_id: "l1", state: "reserved", quantity: 120, product: { name: "Módulo P3.9", track_serials: true }, lot: { code: "P39-2026-A" }, warehouse: { name: "Depósito Central" } },
+          { product_id: "p1", warehouse_id: "w1", lot_id: "l1", state: "available", quantity: 196, product: { name: "MÃ³dulo P3.9", track_serials: true }, lot: { code: "P39-2026-A" }, warehouse: { name: "DepÃ³sito Central" } },
+          { product_id: "p1", warehouse_id: "w1", lot_id: "l1", state: "reserved", quantity: 120, product: { name: "MÃ³dulo P3.9", track_serials: true }, lot: { code: "P39-2026-A" }, warehouse: { name: "DepÃ³sito Central" } },
         ]);
-        setProducts([{ id: "p1", name: "Módulo P3.9" }]);
-        setWarehouses([{ id: "w1", name: "Depósito Central" }]);
+        setProducts([{ id: "p1", name: "MÃ³dulo P3.9" }]);
+        setWarehouses([{ id: "w1", name: "DepÃ³sito Central" }]);
         setLoading(false);
         return;
       }
@@ -67,7 +69,7 @@ export default function InventarioPage() {
   const byWarehouse = useMemo(() => {
     const map = {};
     rows.forEach((r) => {
-      const name = r.warehouse?.name || "Sin depósito";
+      const name = r.warehouse?.name || "Sin depÃ³sito";
       map[name] = (map[name] || 0) + (Number(r.quantity) || 0);
     });
     return Object.entries(map);
@@ -89,11 +91,56 @@ export default function InventarioPage() {
     setLoadingSeries(false);
   }
 
-  if (loading) return <div className="empty-state">Cargando inventario…</div>;
+  if (loading) return <div className="empty-state">Cargando inventarioâ¦</div>;
 
   return (
     <div>
       {error && <p style={{ color: "var(--danger)", fontSize: 12.5 }}>{error}</p>}
+
+      <div className="card" id="etiquetasCard">
+        <div className="no-print" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <h3 style={{ margin: 0 }}>Generar QR de producto</h3>
+        </div>
+        <div className="grid-3 no-print" style={{ marginBottom: 12 }}>
+          <div className="field">
+            <label>Producto</label>
+            <select value={qrProductId} onChange={(e) => setQrProductId(e.target.value)}>
+              <option value="">Elegir producto</option>
+              {products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label>Cantidad de etiquetas</label>
+            <input type="number" min="1" value={qrQuantity} onChange={(e) => setQrQuantity(e.target.value)} />
+          </div>
+          <div className="field" style={{ display: "flex", alignItems: "flex-end" }}>
+            <button type="button" className="btn btn-primary" style={{ width: "100%" }} disabled={!qrProductId} onClick={() => window.print()}>
+              Imprimir etiquetas
+            </button>
+          </div>
+        </div>
+        {qrProductId && (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+            {Array.from({ length: Math.max(1, Number(qrQuantity) || 1) }).map((_, i) => {
+              const product = products.find((p) => p.id === qrProductId);
+              const qrData = `PRODUCTO:${qrProductId}`;
+              return (
+                <div key={i} style={{ border: "1px dashed var(--border-strong)", borderRadius: 8, padding: 10, textAlign: "center", background: "var(--surface-2)" }}>
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=${encodeURIComponent(qrData)}`}
+                    width="90"
+                    height="90"
+                    alt={`QR ${product?.name}`}
+                    style={{ display: "block", margin: "0 auto 6px" }}
+                  />
+                  <div style={{ fontSize: 12, fontWeight: 500 }}>{product?.name}</div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <p className="note no-print">Este QR identifica el producto en general (no una unidad puntual) — sirve para pegar en estantes, bins o cajas donde se guarda ese producto.</p>
+      </div>
 
       <div className="grid-3" style={{ marginBottom: 16 }}>
         <div className="field">
@@ -104,9 +151,9 @@ export default function InventarioPage() {
           </select>
         </div>
         <div className="field">
-          <label>Depósito</label>
+          <label>DepÃ³sito</label>
           <select value={filterWarehouse} onChange={(e) => setFilterWarehouse(e.target.value)}>
-            <option value="">Todos los depósitos</option>
+            <option value="">Todos los depÃ³sitos</option>
             {warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
         </div>
@@ -130,22 +177,22 @@ export default function InventarioPage() {
       </div>
 
       <div className="card">
-        <h3>Stock por producto / lote / depósito</h3>
+        <h3>Stock por producto / lote / depÃ³sito</h3>
         {filteredRows.length === 0 ? (
-          <p className="note">No hay stock cargado todavía con estos filtros. Empezá por Ingreso de mercadería.</p>
+          <p className="note">No hay stock cargado todavÃ­a con estos filtros. EmpezÃ¡ por Ingreso de mercaderÃ­a.</p>
         ) : (
           <table>
             <tbody>
-              <tr><th>Producto</th><th>Lote</th><th>Depósito</th><th>Estado</th><th>Cantidad</th><th></th></tr>
+              <tr><th>Producto</th><th>Lote</th><th>DepÃ³sito</th><th>Estado</th><th>Cantidad</th><th></th></tr>
               {filteredRows.map((r) => {
                 const key = `${r.product_id}-${r.lot_id}-${r.warehouse_id}-${r.state}`;
                 const isOpen = expandedKey === key;
                 return (
                   <>
                     <tr key={key}>
-                      <td>{r.product?.name || "—"}</td>
-                      <td>{r.lot?.code || "—"}</td>
-                      <td>{r.warehouse?.name || "—"}</td>
+                      <td>{r.product?.name || "â"}</td>
+                      <td>{r.lot?.code || "â"}</td>
+                      <td>{r.warehouse?.name || "â"}</td>
                       <td><span className={`tag ${stateTag[r.state] || "tag-neutral"}`}>{stateLabel[r.state] || r.state}</span></td>
                       <td>{Number(r.quantity).toLocaleString("es-AR")}</td>
                       <td>
@@ -160,7 +207,7 @@ export default function InventarioPage() {
                       <tr key={key + "-detail"}>
                         <td colSpan="6" style={{ background: "var(--surface-2)" }}>
                           {loadingSeries && !seriesByKey[key] ? (
-                            <span className="note">Cargando series…</span>
+                            <span className="note">Cargando seriesâ¦</span>
                           ) : (
                             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                               {(seriesByKey[key] || []).length === 0 ? (
@@ -184,7 +231,7 @@ export default function InventarioPage() {
       </div>
 
       <div className="card">
-        <h3>Resumen por depósito</h3>
+        <h3>Resumen por depÃ³sito</h3>
         <div className="grid-3">
           {byWarehouse.map(([name, total]) => (
             <div key={name} style={{ border: "1px solid var(--border)", borderRadius: 8, padding: "10px 12px" }}>
