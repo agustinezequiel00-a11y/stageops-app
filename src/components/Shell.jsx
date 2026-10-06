@@ -12,7 +12,7 @@ const groups = [
   {
     title: "Inventario",
     items: [
-      ["Ingreso de mercaderÃ­a", "/ingreso"],
+      ["Ingreso de mercadería", "/ingreso"],
       ["Inventario general", "/inventario"],
       ["Depósitos y ubicaciones", "/depositos"],
     ],
@@ -21,25 +21,28 @@ const groups = [
     title: "Eventos",
     items: [
       ["Reservas", "/reservas"],
-      ["PreparaciÃ³n de pedido", "/preparacion"],
+      ["Equipo del evento", "/equipo"],
+      ["Predios", "/predios"],
+      ["Preparación de pedido", "/preparacion"],
       ["Plan de carga", "/transporte"],
-      ["VehÃ­culos", "/vehiculos"],
+      ["Vehículos", "/vehiculos"],
       ["Retorno de evento", "/retorno"],
     ],
   },
   {
     title: "Taller",
-    items: [["ReparaciÃ³n", "/taller"]],
+    items: [["Reparación", "/taller"]],
   },
   {
-    title: "GestiÃ³n",
+    title: "Gestión",
     items: [
       ["Reportes", "/reportes"],
       ["Clientes", "/clientes"],
       ["Colaboradores", "/colaboradores"],
       ["Personal", "/personal"],
+      ["Puestos y equipos", "/puestos"],
       ["Proveedores", "/proveedores"],
-      ["ConfiguraciÃ³n", "/configuracion"],
+      ["Configuración", "/configuracion"],
     ],
   },
 ];
@@ -56,7 +59,7 @@ export default function Shell({ children, session, profile }) {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">Stage<span>OPS</span></div>
-        <div className="brand-subtitle">GestiÃ³n de pantallas LED</div>
+        <div className="brand-subtitle">Gestión de pantallas LED</div>
         <nav>
           {groups.map((g) => (
             <div className="nav-group" key={g.title}>
@@ -80,7 +83,7 @@ export default function Shell({ children, session, profile }) {
           <h1 id="pageTitle">StageOPS</h1>
           <span className="spacer" />
           <span className="who">
-            {profile?.full_name || session?.user?.email} Â· {profile?.role || "sin rol"}
+            {profile?.full_name || session?.user?.email} · {profile?.role || "sin rol"}
           </span>
           <button className="btn" onClick={signOut}>
             {session?.demo ? "Demo" : "Salir"}
