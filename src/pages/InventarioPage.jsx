@@ -27,11 +27,11 @@ export default function InventarioPage() {
       setError("");
       if (!hasSupabase) {
         setRows([
-          { product_id: "p1", warehouse_id: "w1", lot_id: "l1", state: "available", quantity: 196, product: { name: "MÃ³dulo P3.9", track_serials: true }, lot: { code: "P39-2026-A" }, warehouse: { name: "DepÃ³sito Central" } },
-          { product_id: "p1", warehouse_id: "w1", lot_id: "l1", state: "reserved", quantity: 120, product: { name: "MÃ³dulo P3.9", track_serials: true }, lot: { code: "P39-2026-A" }, warehouse: { name: "DepÃ³sito Central" } },
+          { product_id: "p1", warehouse_id: "w1", lot_id: "l1", state: "available", quantity: 196, product: { name: "Módulo P3.9", track_serials: true }, lot: { code: "P39-2026-A" }, warehouse: { name: "Depósito Central" } },
+          { product_id: "p1", warehouse_id: "w1", lot_id: "l1", state: "reserved", quantity: 120, product: { name: "Módulo P3.9", track_serials: true }, lot: { code: "P39-2026-A" }, warehouse: { name: "Depósito Central" } },
         ]);
-        setProducts([{ id: "p1", name: "MÃ³dulo P3.9" }]);
-        setWarehouses([{ id: "w1", name: "DepÃ³sito Central" }]);
+        setProducts([{ id: "p1", name: "Módulo P3.9" }]);
+        setWarehouses([{ id: "w1", name: "Depósito Central" }]);
         setLoading(false);
         return;
       }
@@ -69,7 +69,7 @@ export default function InventarioPage() {
   const byWarehouse = useMemo(() => {
     const map = {};
     rows.forEach((r) => {
-      const name = r.warehouse?.name || "Sin depÃ³sito";
+      const name = r.warehouse?.name || "Sin depósito";
       map[name] = (map[name] || 0) + (Number(r.quantity) || 0);
     });
     return Object.entries(map);
@@ -91,7 +91,7 @@ export default function InventarioPage() {
     setLoadingSeries(false);
   }
 
-  if (loading) return <div className="empty-state">Cargando inventarioâ¦</div>;
+  if (loading) return <div className="empty-state">Cargando inventario…</div>;
 
   return (
     <div>
@@ -151,9 +151,9 @@ export default function InventarioPage() {
           </select>
         </div>
         <div className="field">
-          <label>DepÃ³sito</label>
+          <label>Depósito</label>
           <select value={filterWarehouse} onChange={(e) => setFilterWarehouse(e.target.value)}>
-            <option value="">Todos los depÃ³sitos</option>
+            <option value="">Todos los depósitos</option>
             {warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
         </div>
@@ -177,22 +177,22 @@ export default function InventarioPage() {
       </div>
 
       <div className="card">
-        <h3>Stock por producto / lote / depÃ³sito</h3>
+        <h3>Stock por producto / lote / depósito</h3>
         {filteredRows.length === 0 ? (
-          <p className="note">No hay stock cargado todavÃ­a con estos filtros. EmpezÃ¡ por Ingreso de mercaderÃ­a.</p>
+          <p className="note">No hay stock cargado todavía con estos filtros. Empezá por Ingreso de mercadería.</p>
         ) : (
           <table>
             <tbody>
-              <tr><th>Producto</th><th>Lote</th><th>DepÃ³sito</th><th>Estado</th><th>Cantidad</th><th></th></tr>
+              <tr><th>Producto</th><th>Lote</th><th>Depósito</th><th>Estado</th><th>Cantidad</th><th></th></tr>
               {filteredRows.map((r) => {
                 const key = `${r.product_id}-${r.lot_id}-${r.warehouse_id}-${r.state}`;
                 const isOpen = expandedKey === key;
                 return (
                   <>
                     <tr key={key}>
-                      <td>{r.product?.name || "â"}</td>
-                      <td>{r.lot?.code || "â"}</td>
-                      <td>{r.warehouse?.name || "â"}</td>
+                      <td>{r.product?.name || "—"}</td>
+                      <td>{r.lot?.code || "—"}</td>
+                      <td>{r.warehouse?.name || "—"}</td>
                       <td><span className={`tag ${stateTag[r.state] || "tag-neutral"}`}>{stateLabel[r.state] || r.state}</span></td>
                       <td>{Number(r.quantity).toLocaleString("es-AR")}</td>
                       <td>
@@ -207,7 +207,7 @@ export default function InventarioPage() {
                       <tr key={key + "-detail"}>
                         <td colSpan="6" style={{ background: "var(--surface-2)" }}>
                           {loadingSeries && !seriesByKey[key] ? (
-                            <span className="note">Cargando seriesâ¦</span>
+                            <span className="note">Cargando series…</span>
                           ) : (
                             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                               {(seriesByKey[key] || []).length === 0 ? (
@@ -231,7 +231,7 @@ export default function InventarioPage() {
       </div>
 
       <div className="card">
-        <h3>Resumen por depÃ³sito</h3>
+        <h3>Resumen por depósito</h3>
         <div className="grid-3">
           {byWarehouse.map(([name, total]) => (
             <div key={name} style={{ border: "1px solid var(--border)", borderRadius: 8, padding: "10px 12px" }}>
