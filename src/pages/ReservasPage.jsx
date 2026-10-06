@@ -29,7 +29,7 @@ export default function ReservasPage() {
   async function loadBase() {
     if (!hasSupabase) {
       setEvents([{ id: "demo-e1", name: "Festival Aurora", event_at: "2026-09-18", status: "quoted", contract_amount: null, contract_currency: "ARS" }]);
-      setProducts([{ id: "demo-p1", name: "MÃ³dulo LED P3.9" }]);
+      setProducts([{ id: "demo-p1", name: "Módulo LED P3.9" }]);
       setCollaborators([]);
       setClients([]);
       setLoading(false);
@@ -73,7 +73,7 @@ export default function ReservasPage() {
 
   async function createEvent() {
     if (!newEventName.trim() || !newEventDate) {
-      setError("CompletÃ¡ nombre y fecha del evento.");
+      setError("Completá nombre y fecha del evento.");
       return;
     }
     setBusy(true);
@@ -104,11 +104,11 @@ export default function ReservasPage() {
     e.preventDefault();
     setError("");
     if (!selectedEventId || !lineProductId || !lineQuantity || Number(lineQuantity) <= 0) {
-      setError("ElegÃ­ evento, producto y una cantidad mayor a cero.");
+      setError("Elegí evento, producto y una cantidad mayor a cero.");
       return;
     }
     if (lineSource === "collaborator" && !lineCollaboratorId) {
-      setError("ElegÃ­ de quÃ© colaborador sale esta lÃ­nea.");
+      setError("Elegí de qué colaborador sale esta línea.");
       return;
     }
     setBusy(true);
@@ -129,7 +129,7 @@ export default function ReservasPage() {
     loadReservations(selectedEventId);
   }
 
-  if (loading) return <div className="empty-state">Cargandoâ¦</div>;
+  if (loading) return <div className="empty-state">Cargando…</div>;
 
   const selectedEvent = events.find((e) => e.id === selectedEventId);
 
@@ -165,7 +165,7 @@ export default function ReservasPage() {
           <div style={{ display: "flex", gap: 8 }}>
             <select value={selectedEventId} onChange={(e) => setSelectedEventId(e.target.value)} style={{ flex: 1 }}>
               <option value="">Elegir evento</option>
-              {events.map((e) => <option key={e.id} value={e.id}>{e.name} Â· {formatDate(e.event_at)}</option>)}
+              {events.map((e) => <option key={e.id} value={e.id}>{e.name} · {formatDate(e.event_at)}</option>)}
             </select>
             <button className="btn btn-primary" onClick={() => setShowNewEvent(true)}>+ Nuevo evento</button>
           </div>
@@ -175,16 +175,16 @@ export default function ReservasPage() {
       {selectedEvent && (
         <>
           <div className="card">
-            <h3>Equipo reservado â {selectedEvent.name}</h3>
+            <h3>Equipo reservado — {selectedEvent.name}</h3>
             {reservations.length === 0 ? (
-              <p className="note">TodavÃ­a no hay nada reservado para este evento.</p>
+              <p className="note">Todavía no hay nada reservado para este evento.</p>
             ) : (
               <table>
                 <tbody>
                   <tr><th>Producto</th><th>Cantidad</th><th>Origen</th><th>Estado</th></tr>
                   {reservations.map((r) => (
                     <tr key={r.id}>
-                      <td>{r.product?.name || "â"}</td>
+                      <td>{r.product?.name || "—"}</td>
                       <td>{r.quantity}</td>
                       <td>{r.source === "collaborator" ? <span className="tag" style={{ background: "rgba(92,200,224,0.12)", color: "var(--info)" }}>{r.collaborator?.name || "colaborador"}</span> : <span className="tag tag-success">stock propio</span>}</td>
                       <td><span className="tag tag-warning">{r.status}</span></td>
@@ -196,7 +196,7 @@ export default function ReservasPage() {
           </div>
 
           <div className="card">
-            <h3>Agregar lÃ­nea de equipo</h3>
+            <h3>Agregar línea de equipo</h3>
             <form onSubmit={addLine}>
               <div className="grid-2" style={{ marginBottom: 12 }}>
                 <div className="field">
@@ -229,7 +229,7 @@ export default function ReservasPage() {
                   </div>
                 )}
               </div>
-              <button className="btn btn-primary" disabled={busy}>{busy ? "Guardandoâ¦" : "Agregar a la reserva"}</button>
+              <button className="btn btn-primary" disabled={busy}>{busy ? "Guardando…" : "Agregar a la reserva"}</button>
             </form>
           </div>
         </>
